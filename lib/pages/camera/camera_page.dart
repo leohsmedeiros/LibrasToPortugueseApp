@@ -1,5 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:libras_to_portuguese_app/pages/camera_preview/CustomCameraPreview.dart';
 
 import '../../main.dart';
 
@@ -21,7 +22,7 @@ class _CameraPageState extends State<CameraPage> {
   @override
   void initState() {
     super.initState();
-    controller = CameraController(cameras[0], ResolutionPreset.medium);
+    controller = CameraController(cameras[1], ResolutionPreset.medium);
     controller.initialize().then((_) {
       if (!mounted) {
         return;
@@ -50,29 +51,29 @@ class _CameraPageState extends State<CameraPage> {
         toolbarHeight: 50,
         automaticallyImplyLeading: true,
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Container(
-            height: MediaQuery.of(context).size.height - 150,
-            child: AspectRatio(
-                aspectRatio: controller.value.aspectRatio,
-                child: CameraPreview(controller)),
-          ),
-          Container(
-            width: double.infinity,
-            height: 50,
-            margin: EdgeInsets.all(10.0),
-            child: RawMaterialButton(
-              onPressed: () => _takePhoto(context),
-              fillColor: Color(0xFF001D34),
-              child:
-              Icon(Icons.camera_alt, color: Colors.white30, size: 35),
-              shape: CircleBorder(),
-            ),
-          )
-        ],
-      ),
+      body: SingleChildScrollView(child: CustomCameraPreview(controller))
+      // Column(
+      //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      //   children: [
+      //     Container(
+      //       child: AspectRatio(
+      //           aspectRatio: controller.value.aspectRatio,
+      //           child: CustomCameraPreview(controller)),
+      //     ),
+          // Container(
+          //   width: double.infinity,
+          //   height: 50,
+          //   margin: EdgeInsets.all(10.0),
+          //   child: RawMaterialButton(
+          //     onPressed: () => _takePhoto(context),
+          //     fillColor: Color(0xFF001D34),
+          //     child:
+          //     Icon(Icons.camera_alt, color: Colors.white30, size: 35),
+          //     shape: CircleBorder(),
+          //   ),
+          // )
+        // ],
+      // ),
     );
   }
 

@@ -17,6 +17,8 @@ dependencies:
   path_provider: ^1.6.24
   get: ^3.24.0
   opencv: ^1.0.4
+  flutter_cache_manager: ^2.1.1
+
 
 dev_dependencies:
   flutter_test:
