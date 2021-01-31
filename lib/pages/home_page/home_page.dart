@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:libras_to_portuguese_app/pages/camera/camera_page.dart';
-import 'package:libras_to_portuguese_app/shared/routes/routes.dart';
+import 'package:get/get.dart';
+import 'package:libras_to_portuguese_app/pages/camera/libras_camera_page.dart';
 
 class HomePage extends StatelessWidget {
   @override
@@ -9,7 +9,7 @@ class HomePage extends StatelessWidget {
       body: Center(
         child: RaisedButton(
           child: Text('start'),
-          onPressed: () => Navigator.pushNamed(context, Routes.getRouteName(CameraPage)),
+          onPressed: () => Get.to(LibrasCameraPage()),
         ),
       ),
     );

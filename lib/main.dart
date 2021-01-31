@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:camera/camera.dart';
 
 import 'pages/home_page/home_page.dart';
-import 'shared/routes/routes.dart';
 
 List<CameraDescription> cameras;
 
@@ -18,12 +17,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: '/',
-      routes: Routes.getRoutes(context),
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        accentColor: Color(0xAA001D34),
+        // primaryColor: Color(0xAA001D34),
+        // buttonColor: Color(0xFF001D34),
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
+      home: HomePage(),
     );
   }
 }
