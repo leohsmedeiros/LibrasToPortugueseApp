@@ -1,9 +1,8 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
+import 'package:image/image.dart' as imglib;
 
 class PhotoPreview extends StatelessWidget {
-  final File photoData;
+  final dynamic photoData;
 
   PhotoPreview({@required this.photoData});
 
@@ -11,7 +10,8 @@ class PhotoPreview extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Image.file(photoData),
+        child: Image.memory(imglib.encodeJpg(photoData)),
+        // child: photoData,
       )
     );
   }
