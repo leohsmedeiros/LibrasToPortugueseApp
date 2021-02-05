@@ -7,6 +7,7 @@ class LibrasCameraPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
         title: Text('Camera'),
         automaticallyImplyLeading: true,
@@ -14,35 +15,83 @@ class LibrasCameraPage extends StatelessWidget {
       body: GetBuilder(
         init: LibrasCameraController(),
         builder: (LibrasCameraController controller) {
-          return (controller.isInitialized)
-              ? Column(
+          if (!controller.isInitialized) {
+            return Container();
+          }
+
+          return Column(
+            children: [
+              Expanded(
+                child: Stack(
                   children: [
-                    Expanded(
-                      flex: 8,
+                    Container(
                       child: AspectRatio(
                           aspectRatio: controller.aspectRatio,
                           child: controller.preview),
                     ),
-                    Expanded(
-                      flex: 1,
-                      child: Container(
-                        padding: const EdgeInsets.all(5.0),
-                        width: double.infinity,
-                        color: Theme.of(context).primaryColor,
-                        child: RawMaterialButton(
-                          onPressed: () => controller.takePhoto(),
-                          fillColor: Theme.of(context).primaryColorDark,
-                          child: Icon(Icons.camera_alt,
-                              color: Colors.white, size: 30),
-                          shape: CircleBorder(),
-                        ),
+                    // controller.preview,
+                    Container(
+                      width: double.infinity,
+                      height: double.infinity,
+                      child: CustomPaint(
+                        painter:
+                            OpenPainter(previewSize: controller.previewSize),
                       ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.all(20.0),
+                      width: double.infinity,
+                      color: Colors.black54,
+                      child: Text('Posicione sua mão ao centro, faça o sinal\ne clique em \'Analisar\'',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.white70)),
                     )
                   ],
-                )
-              : Container();
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.all(5.0),
+                width: double.infinity,
+                color: Theme.of(context).primaryColor,
+                child: RaisedButton(
+                  onPressed: () => controller.takePhoto(),
+                  child: Text('Analisar'),
+                ),
+              ),
+            ],
+          );
         },
       ),
     );
   }
+}
+
+class OpenPainter extends CustomPainter {
+  final Size previewSize;
+
+  OpenPainter({this.previewSize});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    var paint1 = Paint()
+      ..color = Color(0xff638965)
+      ..strokeWidth = 5.0
+      ..style = PaintingStyle.stroke;
+
+    int width = 200;
+    int height = 200;
+
+    double centerImageX = Get.width / 2;
+    double centerImageY = previewSize.height / 2;
+
+    Rect rect = Rect.fromCenter(
+        center: Offset(centerImageX, centerImageY),
+        width: width.toDouble(),
+        height: height.toDouble());
+
+    canvas.drawRect(rect, paint1);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => true;
 }
