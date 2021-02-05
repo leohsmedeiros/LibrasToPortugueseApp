@@ -1,4 +1,3 @@
-import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -8,6 +7,7 @@ class LibrasCameraPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).primaryColor,
       appBar: AppBar(
         title: Text('Camera'),
         automaticallyImplyLeading: true,
@@ -19,29 +19,43 @@ class LibrasCameraPage extends StatelessWidget {
             return Container();
           }
 
-          return Stack(
+          return Column(
             children: [
-              // AspectRatio(
-              //     aspectRatio: controller.aspectRatio,
-              //     child: controller.preview),
-              controller.preview,
-              Container(
-                width: double.infinity,
-                height: double.infinity,
-                child: CustomPaint(
-                  painter: OpenPainter(previewSize: controller.previewSize),
+              Expanded(
+                child: Stack(
+                  children: [
+                    Container(
+                      child: AspectRatio(
+                          aspectRatio: controller.aspectRatio,
+                          child: controller.preview),
+                    ),
+                    // controller.preview,
+                    Container(
+                      width: double.infinity,
+                      height: double.infinity,
+                      child: CustomPaint(
+                        painter:
+                            OpenPainter(previewSize: controller.previewSize),
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.all(20.0),
+                      width: double.infinity,
+                      color: Colors.black54,
+                      child: Text('Posicione sua mão ao centro, faça o sinal\ne clique em \'Analisar\'',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.white70)),
+                    )
+                  ],
                 ),
               ),
               Container(
-                // alignment: Alignment.bottomCenter,
                 padding: const EdgeInsets.all(5.0),
                 width: double.infinity,
                 color: Theme.of(context).primaryColor,
-                child: RawMaterialButton(
+                child: RaisedButton(
                   onPressed: () => controller.takePhoto(),
-                  fillColor: Theme.of(context).primaryColorDark,
-                  child: Icon(Icons.camera_alt, color: Colors.white, size: 30),
-                  shape: CircleBorder(),
+                  child: Text('Analisar'),
                 ),
               ),
             ],
@@ -61,34 +75,21 @@ class OpenPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     var paint1 = Paint()
       ..color = Color(0xff638965)
-      ..style = PaintingStyle.fill;
-    //a rectangle
-    // canvas.drawRect(Offset(100, 100) & Size(200, 100), paint1);
+      ..strokeWidth = 5.0
+      ..style = PaintingStyle.stroke;
+
     int width = 200;
     int height = 200;
-
-    // int offsetX = ((Get.width/2) - (width/2)).ceil();
-    // int offsetY = ((Get.height/2) - (height/2)).ceil();
 
     double centerImageX = Get.width / 2;
     double centerImageY = previewSize.height / 2;
 
-    Offset p1 = Offset(centerImageX - (width / 2), centerImageY - (height / 2));
-    Offset p2 = Offset(centerImageX + (width / 2), centerImageY - (height / 2));
+    Rect rect = Rect.fromCenter(
+        center: Offset(centerImageX, centerImageY),
+        width: width.toDouble(),
+        height: height.toDouble());
 
-    canvas.drawLine(p1, p2, paint1);
-
-    Offset p3 = Offset(centerImageX + (width / 2), centerImageY - (height / 2));
-    Offset p4 = Offset(centerImageX + (width / 2), centerImageY + (height / 2));
-    canvas.drawLine(p3, p4, paint1);
-
-    Offset p5 = Offset(centerImageX + (width / 2), centerImageY + (height / 2));
-    Offset p6 = Offset(centerImageX - (width / 2), centerImageY + (height / 2));
-    canvas.drawLine(p5, p6, paint1);
-
-    Offset p7 = Offset(centerImageX - (width / 2), centerImageY + (height / 2));
-    Offset p8 = Offset(centerImageX - (width / 2), centerImageY - (height / 2));
-    canvas.drawLine(p7, p8, paint1);
+    canvas.drawRect(rect, paint1);
   }
 
   @override
