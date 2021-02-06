@@ -78,8 +78,8 @@ class OpenPainter extends CustomPainter {
       ..strokeWidth = 5.0
       ..style = PaintingStyle.stroke;
 
-    int width = 200;
-    int height = 200;
+    int width = 108;
+    int height = 108;
 
     double centerImageX = Get.width / 2;
     double centerImageY = previewSize.height / 2;
