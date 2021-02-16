@@ -22,9 +22,9 @@ class LibrasCameraController extends GetxController {
     controller.initialize().then((_) => update());
   }
 
-  _cropImage(imgLib.Image image) {
-    int width = 200;
-    int height = 200;
+  imgLib.Image _cropImage(imgLib.Image image) {
+    int width = 128;
+    int height = 128;
 
     int offsetX = ((image.width / 2) - (width / 2)).ceil();
     int offsetY = ((image.height / 2) - (height / 2)).ceil();
@@ -40,9 +40,14 @@ class LibrasCameraController extends GetxController {
   takePhoto() async {
     await CameraPlatform.instance
         .takePicture(controller.cameraId)
-        .then((xFile) => xFile.readAsBytes())
-        .then((bytes) => _cropImage(imgLib.decodeImage(bytes)))
-        .then((imageCropped) => Get.to(PhotoPreview(photoData: imageCropped)))
+        .then((xFile) => Get.to(PhotoPreview(photoData: xFile.path)))
         .catchError(_onError);
+    // await CameraPlatform.instance
+    //     .takePicture(controller.cameraId)
+    //     .then((xFile) => xFile.readAsBytes())
+    //     .then((bytes) => _cropImage(imgLib.decodeImage(bytes)))
+    //     .then((imgLib.Image imageCropped) => Get.to(
+    //         PhotoPreview(photoData: imgLib.flipHorizontal(imageCropped))))
+    //     .catchError(_onError);
   }
 }
