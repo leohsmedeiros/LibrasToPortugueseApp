@@ -40,10 +40,14 @@ class LibrasCameraController extends GetxController {
   takePhoto() async {
     await CameraPlatform.instance
         .takePicture(controller.cameraId)
-        .then((xFile) => xFile.readAsBytes())
-        .then((bytes) => _cropImage(imgLib.decodeImage(bytes)))
-        .then((imgLib.Image imageCropped) => Get.to(
-            PhotoPreview(photoData: imgLib.flipHorizontal(imageCropped))))
+        .then((xFile) => Get.to(PhotoPreview(photoData: xFile.path)))
         .catchError(_onError);
+    // await CameraPlatform.instance
+    //     .takePicture(controller.cameraId)
+    //     .then((xFile) => xFile.readAsBytes())
+    //     .then((bytes) => _cropImage(imgLib.decodeImage(bytes)))
+    //     .then((imgLib.Image imageCropped) => Get.to(
+    //         PhotoPreview(photoData: imgLib.flipHorizontal(imageCropped))))
+    //     .catchError(_onError);
   }
 }

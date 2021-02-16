@@ -1,8 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:libras_to_portuguese_app/pages/camera/libras_camera_page.dart';
+import 'package:tflite/tflite.dart';
 
 class HomePage extends StatelessWidget {
+  HomePage() {
+    Tflite.loadModel(
+            model: "assets/model/model_unquant.tflite",
+            labels: "assets/model/labels.txt",
+            numThreads: 1,
+            // defaults to 1
+            isAsset: true,
+            // defaults to true, set to false to load resources outside assets
+            useGpuDelegate:
+                false // defaults to false, set to true to use GPU delegate
+            )
+        .then((res) => print('res: $res'));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

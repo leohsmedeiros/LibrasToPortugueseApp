@@ -19,6 +19,7 @@ dependencies:
   opencv: ^1.0.4
   flutter_cache_manager: ^2.1.1
   image: ^2.1.19
+  tflite: ^1.1.1
 
 dev_dependencies:
   flutter_test:
@@ -26,3 +27,9 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  assets:
+    - assets/test/
+    - assets/training/
+    - assets/model_a_b/
+    - assets/model/
