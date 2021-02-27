@@ -6,63 +6,135 @@ import 'libras_camera_controller.dart';
 class LibrasCameraPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).primaryColor,
-      appBar: AppBar(
-        title: Text('Camera'),
-        automaticallyImplyLeading: true,
-      ),
-      body: GetBuilder(
-        init: LibrasCameraController(),
-        builder: (LibrasCameraController controller) {
-          if (!controller.isInitialized) {
-            return Container();
-          }
+    return WillPopScope(
+      onWillPop: () async {
+        LibrasCameraController.instance.dispose();
+        Get.back();
+        return false;
+      },
+      child: Scaffold(
+        backgroundColor: Theme.of(context).primaryColor,
+        appBar: AppBar(
+          title: Text('Camera'),
+          automaticallyImplyLeading: true,
+        ),
+        body: GetBuilder(
+          init: LibrasCameraController.instance,
+          builder: (LibrasCameraController controller) {
+            if (!controller.camera.isInitialized) {
+              return Container();
+            }
 
-          return Column(
-            children: [
-              Expanded(
-                child: Stack(
-                  children: [
-                    Container(
-                      child: AspectRatio(
-                          aspectRatio: controller.aspectRatio,
-                          child: controller.preview),
-                    ),
-                    // controller.preview,
-                    Container(
-                      width: double.infinity,
-                      height: double.infinity,
-                      child: CustomPaint(
-                        painter:
-                            OpenPainter(previewSize: controller.previewSize),
+            return Column(
+              children: [
+                Expanded(
+                  child: Stack(
+                    children: [
+                      Container(
+                        child: AspectRatio(
+                            aspectRatio: controller.camera.aspectRatio,
+                            child: controller.preview),
                       ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.all(20.0),
-                      width: double.infinity,
-                      color: Colors.black54,
-                      child: Text('Posicione sua mão ao centro, faça o sinal\ne clique em \'Analisar\'',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(color: Colors.white70)),
-                    )
-                  ],
+                      // controller.preview,
+                      Container(
+                        width: double.infinity,
+                        height: double.infinity,
+                        child: CustomPaint(
+                          painter: OpenPainter(
+                              previewSize: controller.camera.previewSize),
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.all(20.0),
+                        width: double.infinity,
+                        color: Colors.black54,
+                        child: Text(
+                            'Posicione sua mão ao centro, faça o sinal\ne clique em \'Analisar\'',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: Colors.white70)),
+                      )
+                    ],
+                  ),
                 ),
-              ),
-              Container(
-                padding: const EdgeInsets.all(5.0),
-                width: double.infinity,
-                color: Theme.of(context).primaryColor,
-                child: RaisedButton(
-                  onPressed: () => controller.takePhoto(),
-                  child: Text('Analisar'),
+                Expanded(
+                  child: Text(
+                    controller.classifiedSign,
+                    style: TextStyle(fontSize: 30),
+                  ),
                 ),
-              ),
-            ],
-          );
-        },
+                // Container(
+                //   padding: const EdgeInsets.all(5.0),
+                //   width: double.infinity,
+                //   color: Theme.of(context).primaryColor,
+                //   child: RaisedButton(
+                //     onPressed: () => controller.takePhoto(),
+                //     child: Text('Analisar'),
+                //   ),
+                // ),
+              ],
+            );
+          },
+        ),
       ),
     );
+
+    // return Scaffold(
+    //   backgroundColor: Theme.of(context).primaryColor,
+    //   appBar: AppBar(
+    //     title: Text('Camera'),
+    //     automaticallyImplyLeading: true,
+    //   ),
+    //   body: GetBuilder(
+    //     init: LibrasCameraController(),
+    //     builder: (LibrasCameraController controller) {
+    //       if (!controller.isInitialized) {
+    //         return Container();
+    //       }
+    //
+    //       return Column(
+    //         children: [
+    //           Expanded(
+    //             child: Stack(
+    //               children: [
+    //                 Container(
+    //                   child: AspectRatio(
+    //                       aspectRatio: controller.aspectRatio,
+    //                       child: controller.preview),
+    //                 ),
+    //                 // controller.preview,
+    //                 Container(
+    //                   width: double.infinity,
+    //                   height: double.infinity,
+    //                   child: CustomPaint(
+    //                     painter:
+    //                         OpenPainter(previewSize: controller.previewSize),
+    //                   ),
+    //                 ),
+    //                 Container(
+    //                   padding: const EdgeInsets.all(20.0),
+    //                   width: double.infinity,
+    //                   color: Colors.black54,
+    //                   child: Text('Posicione sua mão ao centro, faça o sinal\ne clique em \'Analisar\'',
+    //                       textAlign: TextAlign.center,
+    //                       style: TextStyle(color: Colors.white70)),
+    //                 )
+    //               ],
+    //             ),
+    //           ),
+    //           Container(
+    //             padding: const EdgeInsets.all(5.0),
+    //             width: double.infinity,
+    //             color: Theme.of(context).primaryColor,
+    //             child: RaisedButton(
+    //               onPressed: () => controller.takePhoto(),
+    //               child: Text('Analisar'),
+    //             ),
+    //           ),
+    //         ],
+    //       );
+    //     },
+    //   ),
+    // );
   }
 }
 

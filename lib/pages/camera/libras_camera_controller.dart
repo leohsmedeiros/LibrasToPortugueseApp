@@ -1,27 +1,45 @@
+import 'dart:async';
+
 import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:libras_to_portuguese_app/pages/photo_preview/PhotoPreview.dart';
+import 'package:tflite/tflite.dart';
 import '../../main.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
-import 'package:image/image.dart' as imgLib;
 
 class LibrasCameraController extends GetxController {
-  CameraController controller;
+  static LibrasCameraController get instance => LibrasCameraController._();
 
-  bool get isInitialized => controller.value.isInitialized;
+  CameraController _controller;
 
-  double get aspectRatio => controller.value.aspectRatio;
+  String _classifiedSign = "";
 
-  Size get previewSize => controller.value.previewSize;
+  CameraValue get camera => _controller.value;
 
-  CameraPreview get preview => CameraPreview(controller);
+  CameraPreview get preview => CameraPreview(_controller);
 
-  LibrasCameraController() {
-    controller = CameraController(cameras[1], ResolutionPreset.medium);
-    controller.initialize().then((_) => update());
+  String get classifiedSign => _classifiedSign;
+
+  bool _isProcessingImage = false;
+
+  Timer _timer;
+
+  LibrasCameraController._() {
+    _controller = CameraController(cameras[1], ResolutionPreset.medium);
+    _controller.initialize().then((_) {
+      update();
+      _timer = Timer.periodic(
+        new Duration(seconds: 5),
+        (timer) async {
+          if (!_controller.value.isTakingPicture && !_isProcessingImage) {
+            await takePhoto();
+          }
+        },
+      );
+    });
   }
 
+/*
   imgLib.Image _cropImage(imgLib.Image image) {
     int width = 128;
     int height = 128;
@@ -31,23 +49,37 @@ class LibrasCameraController extends GetxController {
 
     return imgLib.copyCrop(image, offsetX, offsetY, width, height);
   }
+*/
+
+  @override
+  dispose() async {
+    _timer.cancel();
+    await _controller.dispose();
+    super.dispose();
+  }
 
   _onError(error, stack) {
     print('ERROR: ${error.toString()}');
     debugPrintStack(stackTrace: stack);
   }
 
-  takePhoto() async {
-    await CameraPlatform.instance
-        .takePicture(controller.cameraId)
-        .then((xFile) => Get.to(PhotoPreview(photoData: xFile.path)))
-        .catchError(_onError);
-    // await CameraPlatform.instance
-    //     .takePicture(controller.cameraId)
-    //     .then((xFile) => xFile.readAsBytes())
-    //     .then((bytes) => _cropImage(imgLib.decodeImage(bytes)))
-    //     .then((imgLib.Image imageCropped) => Get.to(
-    //         PhotoPreview(photoData: imgLib.flipHorizontal(imageCropped))))
-    //     .catchError(_onError);
-  }
+  Future takePhoto() => CameraPlatform.instance
+      .takePicture(_controller.cameraId)
+      .then((xFile) {
+        _isProcessingImage = true;
+        return Tflite.runModelOnImage(
+          path: xFile.path,
+          numResults: 6,
+          threshold: 0.05,
+          imageMean: 127.5,
+          imageStd: 127.5,
+        );
+      })
+      .then((result) => (result != null && result.isNotEmpty)
+          ? Future.value(_classifiedSign =
+              result.first['label'].toString().split(" ").last)
+          : Future.value(_classifiedSign = ""))
+      .then((value) => update())
+      .whenComplete(() => _isProcessingImage = false)
+      .catchError(_onError);
 }

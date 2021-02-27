@@ -6,8 +6,8 @@ import 'package:tflite/tflite.dart';
 class HomePage extends StatelessWidget {
   HomePage() {
     Tflite.loadModel(
-            model: "assets/model/model_unquant.tflite",
-            labels: "assets/model/labels.txt",
+            model: "assets/model_a_b/model_unquant.tflite",
+            labels: "assets/model_a_b/labels.txt",
             numThreads: 1,
             // defaults to 1
             isAsset: true,

@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:image/image.dart' as imgLib;
+import 'package:libras_to_portuguese_app/models/classified_signed.dart';
 import 'package:tflite/tflite.dart';
 
 class PhotoPreview extends StatelessWidget {
@@ -30,16 +30,40 @@ class PhotoPreview extends StatelessWidget {
           );
         }
 
-        List recognitions = snapshot.data;
 
-        recognitions.forEach((element) {
-          print ('recognitions: $element');
-        });
+        List recognitions2 = snapshot.data;
+
+        for (var recognition in recognitions2) {
+          print('recognitions: $recognition');
+        }
+
+        List<ClassifiedSigned> recognitions = (snapshot.data as List)
+            .map<ClassifiedSigned>(
+              (e) => ClassifiedSigned(
+                index: e['index'],
+                label: e['label'],
+                confidence: e['confidence'],
+              ),
+            )
+            .toList();
+
+        for (var recognition in recognitions) {
+          print('recognitions: $recognition');
+        }
 
         return Scaffold(
-          body: Center(
-            child: Image.file(File(photoData)),
-            // child: photoData,
+          body: Column(
+            children: [
+              Center(
+                child: Image.file(File(photoData)),
+              ),
+              Expanded(
+                child: Text(
+                  recognitions.first?.result() ?? "",
+                  style: TextStyle(fontSize: 30.0),
+                ),
+              )
+            ],
           ),
         );
       },
